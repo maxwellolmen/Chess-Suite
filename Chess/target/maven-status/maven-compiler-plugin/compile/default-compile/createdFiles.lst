@@ -1,0 +1,6 @@
+com\maxwellolmen\chess\Chess.class
+com\maxwellolmen\chess\game\ChessPieceType.class
+com\maxwellolmen\chess\game\ChessPiece.class
+com\maxwellolmen\chess\game\ChessBoard.class
+com\maxwellolmen\chess\game\ChessLogic.class
+com\maxwellolmen\chess\game\ChessPosition.class
