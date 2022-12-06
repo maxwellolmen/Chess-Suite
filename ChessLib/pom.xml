@@ -6,7 +6,7 @@
 
     <groupId>com.maxwellolmen</groupId>
     <artifactId>ChessLib</artifactId>
-    <version>A1.1</version>
+    <version>1.0.0</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
