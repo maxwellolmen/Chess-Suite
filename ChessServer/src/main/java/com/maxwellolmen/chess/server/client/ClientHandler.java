@@ -32,7 +32,7 @@ public class ClientHandler {
         this.socket = socket;
         auth = false;
 
-        boolean success = cipher.handshake();
+        boolean success = cipher.handshake(socket.getInetAddress().getHostAddress());
 
         if (!success) {
             exit();

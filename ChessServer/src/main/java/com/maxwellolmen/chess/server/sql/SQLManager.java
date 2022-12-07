@@ -2,6 +2,7 @@ package com.maxwellolmen.chess.server.sql;
 
 import java.sql.*;
 import java.util.Queue;
+import java.util.concurrent.*;
 
 public class SQLManager {
 
@@ -9,9 +10,13 @@ public class SQLManager {
 
     private String username, password;
 
+    private ExecutorService thread;
+
     public SQLManager(String username, String password) {
         this.username = username;
         this.password = password;
+
+        thread = Executors.newSingleThreadExecutor();
     }
 
     public void openConnection() throws SQLException {
@@ -40,6 +45,12 @@ public class SQLManager {
 
     public void close() throws SQLException {
         connection.close();
+    }
+
+    // THIS IS A BLOCKING CALL!!!
+    public ResultSet call(SQLTask task) throws ExecutionException, InterruptedException {
+        Future<ResultSet> f = thread.submit(task);
+        return f.get();
     }
 
     public String loadValue(String username, String value) throws SQLException {

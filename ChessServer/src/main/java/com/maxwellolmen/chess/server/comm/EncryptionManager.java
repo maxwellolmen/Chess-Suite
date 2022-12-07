@@ -29,31 +29,46 @@ public class EncryptionManager {
 
     private SecretKeySpec secretKey;
 
-    public boolean handshake() throws Exception {
-        int length = in.readInt();
+    public boolean handshake(String address) {
+        try {
+            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("DH");
+            keyPairGen.initialize(2048);
 
-        if (length <= 0) return false;
+            KeyPair keyPair = keyPairGen.generateKeyPair();
 
-        byte[] serverKeyEncoded = new byte[length];
-        in.readFully(serverKeyEncoded, 0, length);
-        KeyFactory keyFactory = KeyFactory.getInstance("DH");
-        X509EncodedKeySpec x509 = new X509EncodedKeySpec(serverKeyEncoded);
-        PublicKey publicKey = keyFactory.generatePublic(x509);
-        DHParameterSpec dhParameters = ((DHPublicKey) publicKey).getParams();
-        KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("DH");
-        keyPairGen.initialize(dhParameters);
-        KeyPair keyPair = keyPairGen.generateKeyPair();
-        KeyAgreement keyAgreement = KeyAgreement.getInstance("DH");
-        keyAgreement.init(keyPair.getPrivate());
-        byte[] publicKeyEncoded = keyPair.getPublic().getEncoded();
-        out.writeInt(publicKeyEncoded.length);
-        out.write(publicKeyEncoded);
-        keyAgreement.doPhase(publicKey, true);
-        int l = in.readInt();
-        byte[] sharedSecret = new byte[l];
-        keyAgreement.generateSecret(sharedSecret, 0);
-        this.secretKey = new SecretKeySpec(sharedSecret, 0, 16, "AES");
-        return true;
+            KeyAgreement keyAgreement = KeyAgreement.getInstance("DH");
+            keyAgreement.init(keyPair.getPrivate());
+
+            byte[] publicKeyEncoded = keyPair.getPublic().getEncoded();
+
+            out.writeInt(publicKeyEncoded.length);
+            out.write(publicKeyEncoded);
+
+            // Client's turn
+
+            int length = in.readInt();
+            if (length <= 0) return false;
+
+            byte[] clientKeyEncoded = new byte[length];
+            in.readFully(clientKeyEncoded, 0, length);
+
+            KeyFactory keyFactory = KeyFactory.getInstance("DH");
+            X509EncodedKeySpec x509 = new X509EncodedKeySpec(clientKeyEncoded);
+            PublicKey publicKey = keyFactory.generatePublic(x509);
+            keyAgreement.doPhase(publicKey, true);
+
+            byte[] sharedSecret = keyAgreement.generateSecret();
+            int l = sharedSecret.length;
+
+            out.writeInt(l);
+
+            secretKey = new SecretKeySpec(sharedSecret, 0, 16, "AES");
+
+            System.out.println("Handshaking successful with client @ " + address);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     public void sendEncryptedData(byte[] data) throws Exception {
