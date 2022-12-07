@@ -1,0 +1,11 @@
+com\maxwellolmen\chess\server\client\ClientHandler.class
+com\maxwellolmen\chess\server\sql\SQLManager.class
+com\maxwellolmen\chess\server\comm\Comm.class
+com\maxwellolmen\chess\server\comm\CommType.class
+com\maxwellolmen\chess\server\Main.class
+com\maxwellolmen\chess\server\client\ClientInputHandler.class
+com\maxwellolmen\chess\server\Server.class
+com\maxwellolmen\chess\server\sql\SQLTask.class
+com\maxwellolmen\chess\server\auth\AccountManager.class
+com\maxwellolmen\chess\server\client\ClientOutputHandler.class
+com\maxwellolmen\chess\server\comm\EncryptionManager.class

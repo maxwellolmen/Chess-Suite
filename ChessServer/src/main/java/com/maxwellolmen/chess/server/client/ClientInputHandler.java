@@ -41,7 +41,7 @@ public class ClientInputHandler extends Thread {
                     continue;
                 }
 
-                
+                // TODO: Process Comm object
             } catch (Exception e) {
                 clientHandler.getServer().removeHandler(clientHandler);
                 break;

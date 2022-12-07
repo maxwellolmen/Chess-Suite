@@ -45,14 +45,7 @@ public class Server extends Thread {
             maintain();
 
             Socket clientSocket = serverSocket.accept();
-            ClientHandler clientHandler;
-            try {
-                clientHandler = new ClientHandler(this, clientSocket);
-                clientHandler.start();
-            } catch (Exception e) {
-                continue;
-            }
-
+            ClientHandler clientHandler = new ClientHandler(this, clientSocket);
             handlers.add(clientHandler);
         } catch (Exception e) {
             e.printStackTrace();
