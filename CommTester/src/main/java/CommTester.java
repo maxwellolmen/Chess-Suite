@@ -2,15 +2,13 @@ import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.Configuration;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
-import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DataListener;
 
 public class CommTester {
 
     public static void main(String[] args) {
         Configuration config = new Configuration();
-        config.setHostname("localhost");
-        config.setPort(9092);
+        config.setPort(3001);
 
         final SocketIOServer server = new SocketIOServer(config);
 
@@ -21,11 +19,16 @@ public class CommTester {
             }
         });
 
-        server.addConnectListener(new ConnectListener() {
+        server.addEventListener("signal", String.class, new DataListener<String>() {
             @Override
-            public void onConnect(SocketIOClient socketIOClient) {
-                socketIOClient.sendEvent("msg", "hi");
+            public void onData(SocketIOClient socketIOClient, String s, AckRequest ackRequest) throws Exception {
+                System.out.println(s);
             }
+        });
+
+        server.addConnectListener(socketIOClient -> {
+            socketIOClient.sendEvent("msg", "hi");
+            System.out.println("Client connected");
         });
 
         server.start();
